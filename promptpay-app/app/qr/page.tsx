@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import generatePayload from "promptpay-qr";
 import QRCode from "qrcode";
-
+export const dynamic = "force-dynamic";
 export default function QRPage() {
   const params = useSearchParams();
   const router = useRouter();

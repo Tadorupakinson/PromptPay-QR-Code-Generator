@@ -18,7 +18,6 @@ export default function Home() {
       return;
     }
 
-    const id = Date.now().toString(); // หรือ ORDER-001
 
     router.push(`/qr/${phone}?amount=${amount}`);
   };
