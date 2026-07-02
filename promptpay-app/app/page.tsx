@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
+
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("");
 
@@ -18,8 +19,14 @@ export default function Home() {
       return;
     }
 
+    const id = Date.now().toString(); // หรือ ORDER-001
 
-    router.push(`/qr/${phone}?amount=${amount}`);
+    localStorage.setItem(
+      id,
+      JSON.stringify({ phone, amount })
+    );
+
+    router.push(`/qr/${id}`);
   };
 
   return (
