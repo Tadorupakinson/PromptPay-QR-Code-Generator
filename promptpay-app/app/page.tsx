@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-
-import generatePayload from "promptpay-qr";
-import QRCode from "qrcode";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("");
-  const [qrImage, setQrImage] = useState("");
 
   const generateQR = async () => {
     if (!phone.trim()) {
@@ -20,16 +19,14 @@ export default function Home() {
       return;
     }
 
-    try {
-      const payload = generatePayload(phone, {
-        amount: amount ? Number(amount) : undefined,
-      });
-      const image = await QRCode.toDataURL(payload);
-      setQrImage(image);
-    } catch (error) {
-      alert("ข้อมูลไม่ถูกต้อง");
-      console.error(error);
-    }
+    const id = Date.now().toString(); // หรือ ORDER-001
+
+    localStorage.setItem(
+      id,
+      JSON.stringify({ phone, amount })
+    );
+
+    router.push(`/qr/${id}`);
   };
 
   return (
@@ -58,20 +55,10 @@ export default function Home() {
 
         <button
           onClick={generateQR}
-          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white p-2 rounded"
         >
           สร้าง QR Code
         </button>
-
-        {qrImage && (
-          <div className="mt-6 flex justify-center">
-            <img
-              src={qrImage}
-              alt="PromptPay QR"
-              className="w-64 h-64"
-            />
-          </div>
-        )}
       </div>
     </main>
   );
