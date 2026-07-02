@@ -10,12 +10,21 @@ export default function Home() {
   const [amount, setAmount] = useState("");
 
   const generateQR = async () => {
-    if (!phone.trim()) {
-      alert("กรุณากรอกเบอร์โทรศัพท์หรือเลขบัตรประชาชน");
+    const value = phone.trim();
+
+    const isValid =
+      value &&
+      /^\d+$/.test(value) &&
+      (value.length === 10 || value.length === 13);
+
+    if (!isValid) {
+      alert("กรุณากรอกเบอร์โทร 10 หลัก หรือเลขบัตรประชาชน 13 หลัก");
       return;
     }
-    if (!/^\d+$/.test(phone)) {
-      alert("กรุณากรอกเฉพาะตัวเลข");
+    const isPhone = /^0\d{9}$/.test(phone);
+    const isIdCard = /^\d{13}$/.test(phone);
+    if (!(isPhone || isIdCard)) {
+      alert("กรุณากรอกเบอร์โทรหรือเลขบัตรประชาชนให้ถูกต้อง");
       return;
     }
 
