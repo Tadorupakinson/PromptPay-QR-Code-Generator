@@ -1,21 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import generatePayload from "promptpay-qr";
 import QRCode from "qrcode";
 
 export default function QRPage() {
   const { id } = useParams();
-
   const [qr, setQr] = useState("");
   const [data, setData] = useState<any>(null);
-
+  const router = useRouter();
   useEffect(() => {
     const raw = localStorage.getItem(id as string);
 
     if (!raw) return;
-
     const parsed = JSON.parse(raw);
     setData(parsed);
 
@@ -46,7 +44,7 @@ export default function QRPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-xl shadow text-center w-full max-w-md">
-        <img src="/pic/promptpayimg.png" className="w-auto h-auto mx-auto"alt="promptpay"        />
+        <img src="/pic/promptpayimg.png" className="w-auto h-auto mx-auto" alt="promptpay" />
 
         {qr && (
           <img src={qr} className="mx-auto w-64 h-64" />
@@ -71,6 +69,13 @@ export default function QRPage() {
           className="mt-2 w-full bg-blue-500 text-white p-2 rounded"
         >
           แชร์ลิงก์
+        </button>
+
+        <button
+          onClick={() => router.back()}
+          className="mt-2 w-full bg-gray-500 text-white p-2 rounded"
+        >
+          ย้อนกลับ
         </button>
       </div>
     </main>
