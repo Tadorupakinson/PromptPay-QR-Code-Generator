@@ -5,12 +5,13 @@ import { useSearchParams, useRouter } from "next/navigation";
 import generatePayload from "promptpay-qr";
 import QRCode from "qrcode";
 export const dynamic = "force-dynamic";
+
 export default function QRPage() {
   const params = useSearchParams();
   const router = useRouter();
 
-  const phone = params.get("phone");
-  const amount = params.get("amount");
+  const phone = params.get("phone") ?? "";
+  const amount = params.get("amount") ?? "";
 
   const [qr, setQr] = useState("");
 
