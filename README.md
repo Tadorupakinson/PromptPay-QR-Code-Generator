@@ -10,7 +10,7 @@ cd PromptPay-QR-Code-Generator\promptpay-app
 npm install
 
 ** ใช้งานโปรแกรม **
-ืnpm run dev
+npm run dev
 
 ** เปิดเว็บไซต์ **
 http://localhost:3000
