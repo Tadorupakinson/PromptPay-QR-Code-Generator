@@ -1,42 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import generatePayload from "promptpay-qr";
 import QRCode from "qrcode";
 
 export default function QRPage() {
-  const params = useParams();
+  const params = useSearchParams();
   const router = useRouter();
+
+  const phone = params.get("phone");
+  const amount = params.get("amount");
+
   const [qr, setQr] = useState("");
-  const [data, setData] = useState<any>(null);
-  const id = Array.isArray(params?.id)
-    ? params.id[0]
-    : params?.id;
-
-
 
   useEffect(() => {
-    if (!id) return;
-
-    // กัน SSR crash
-    if (typeof window === "undefined") return;
-
-    const raw = localStorage.getItem(id);
-
-    if (!raw) {
+    if (!phone) {
       router.push("/");
       return;
     }
 
-    const parsed = JSON.parse(raw);
-    setData(parsed);
-
     const createQR = async () => {
-      const payload = generatePayload(parsed.phone, {
-        amount: parsed.amount
-          ? Number(parsed.amount)
-          : undefined,
+      const payload = generatePayload(phone, {
+        amount: amount ? Number(amount) : undefined,
       });
 
       const img = await QRCode.toDataURL(payload);
@@ -44,7 +30,7 @@ export default function QRPage() {
     };
 
     createQR();
-  }, [id]);
+  }, [phone, amount]);
 
   const shareLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -72,16 +58,12 @@ export default function QRPage() {
           <img src={qr} className="mx-auto w-64 h-64" />
         )}
 
-        {data && (
-          <div className="text-center text-black">
-            <p>
-              {data.amount
-                ? Number(data.amount).toFixed(2)
-                : "ไม่กำหนด"}
-            </p>
-            <p>{data.phone}</p>
-          </div>
-        )}
+        <div className="text-center text-black mt-2">
+          <p>
+            {amount ? Number(amount).toFixed(2) : "ไม่กำหนด"}
+          </p>
+          <p>{phone}</p>
+        </div>
 
         <button
           onClick={download}
@@ -103,6 +85,7 @@ export default function QRPage() {
         >
           ย้อนกลับ
         </button>
+
       </div>
     </main>
   );
