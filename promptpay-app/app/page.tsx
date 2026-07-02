@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import generatePayload from "promptpay-qr";
 import QRCode from "qrcode";
 
@@ -10,16 +11,23 @@ export default function Home() {
   const [qrImage, setQrImage] = useState("");
 
   const generateQR = async () => {
+    if (!phone.trim()) {
+      alert("กรุณากรอกเบอร์โทรศัพท์หรือเลขบัตรประชาชน");
+      return;
+    }
+    if (!/^\d+$/.test(phone)) {
+      alert("กรุณากรอกเฉพาะตัวเลข");
+      return;
+    }
+
     try {
       const payload = generatePayload(phone, {
         amount: amount ? Number(amount) : undefined,
       });
-
       const image = await QRCode.toDataURL(payload);
-
       setQrImage(image);
     } catch (error) {
-      alert("กรุณากรอกข้อมูลให้ถูกต้อง");
+      alert("ข้อมูลไม่ถูกต้อง");
       console.error(error);
     }
   };
@@ -36,7 +44,8 @@ export default function Home() {
           placeholder="เบอร์โทรศัพท์ หรือ เลขบัตรประชาชน"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full border rounded-lg p-3 mb-4 text-2xl font-bold text-secondary"
+          required
+          className="w-full border rounded-lg p-3 mb-4  text-secondary"
         />
 
         <input
