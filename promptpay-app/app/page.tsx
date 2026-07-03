@@ -31,10 +31,10 @@ export default function Home() {
     const AmountisValid =
       (/^\d+(\.\d{1,2})?$/.test(amountvalue) &&
         Number(amountvalue) > 0 &&
-        Number(amountvalue) <= 200000);
+        Number(amountvalue) <= 2000000);
 
     if (!AmountisValid) {
-      setAmountError("กรุณากรอกจำนวนเงินมากกว่า 0 และน้อยกว่าหรือเท่ากับ 200,000 บาท");
+      setAmountError("กรุณากรอกจำนวนเงินมากกว่า 0 และน้อยกว่าหรือเท่ากับ 2,000,000 บาท");
       return;
     }
 
