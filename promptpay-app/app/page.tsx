@@ -6,25 +6,35 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
 
-  const [phone, setPhone] = useState("");
+  const [User, setUser] = useState("");
   const [amount, setAmount] = useState("");
-
+  const [UserError, setUserError] = useState("");
+  const [amountError, setAmountError] = useState("");
   const generateQR = async () => {
-    const value = phone.trim();
 
-    const isValid =
-      value &&
-      /^\d+$/.test(value) &&
-      (value.length === 10 || value.length === 13);
+    //ตรวจสอบว่าเบอร์โทรศัพท์และบัตรประชาชนถูกต้องไหม
+    const Uservalue = User.trim();
+    const UserisValid =
+      Uservalue &&
+      /^\d+$/.test(Uservalue) &&
+      (Uservalue.length === 10 || Uservalue.length === 13);
 
-    if (!isValid) {
-      alert("กรุณากรอกเบอร์โทร 10 หลัก หรือเลขบัตรประชาชน 13 หลัก");
+    const isPhone = /^0[689]\d{8}$/.test(User);
+    const isIdCard = isValidThaiID(User);
+    if (!((isPhone || isIdCard ) && UserisValid)) {
+      setUserError("กรุณากรอกเบอร์โทรหรือเลขบัตรประชาชนให้ถูกต้อง");
       return;
     }
-    const isPhone = /^0\d{9}$/.test(phone);
-    const isIdCard = /^\d{13}$/.test(phone);
-    if (!(isPhone || isIdCard)) {
-      alert("กรุณากรอกเบอร์โทรหรือเลขบัตรประชาชนให้ถูกต้อง");
+
+    //ตรวจสอบจำนวนเงินว่าไม่มีติดลบหรือเท่ากับ 0
+    const amountvalue = amount.trim();
+    const AmountisValid =
+      (/^\d+(\.\d{1,2})?$/.test(amountvalue) &&
+        Number(amountvalue) > 0 &&
+        Number(amountvalue) <= 200000);
+
+    if (!AmountisValid) {
+      setAmountError("กรุณากรอกจำนวนเงินมากกว่า 0 และน้อยกว่าหรือเท่ากับ 200,000 บาท");
       return;
     }
 
@@ -32,7 +42,7 @@ export default function Home() {
 
     localStorage.setItem(
       id,
-      JSON.stringify({ phone, amount })
+      JSON.stringify({ User, amount })
     );
 
     router.push(`/qr/${id}`);
@@ -47,28 +57,52 @@ export default function Home() {
 
         <input
           type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           placeholder="เบอร์โทรศัพท์ หรือ เลขบัตรประชาชน"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          value={User}
+          onChange={(e) => {
+            setUser(e.target.value)
+            setUserError(""); // ล้าง Error เมื่อผู้ใช้แก้ไข 
+          }}
           required
-          className="w-full border rounded-lg p-3 mb-4  text-secondary"
+          className="w-full border rounded-lg p-3   text-secondary"
         />
+        {UserError && (
+          <p className="mt-1 text-sm text-red-400 mb-4"> {UserError} </p>
+        )}
 
         <input
-          type="number"
+          type="text"
+          inputMode="decimal"
           placeholder="จำนวนเงิน "
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full border rounded-lg p-3 mb-4 text-secondary"
+          onChange={(e) => {
+            setAmount(e.target.value)
+            setAmountError(""); // ล้าง Error เมื่อผู้ใช้แก้ไข
+          }}
+          className={`w-full border rounded-lg p-3 mt-4 text-secondary ${amountError ? "border-red-500" : ""}`}
         />
+        {amountError && (
+          <p className="mt-1 text-sm text-red-400"> {amountError} </p>
+        )}
 
-        <button
-          onClick={generateQR}
-          className="w-full bg-blue-600 text-white p-2 rounded"
-        >
-          สร้าง QR Code
-        </button>
+        <button onClick={generateQR} className="w-full bg-blue-600 text-white p-2 rounded mt-4" > สร้าง QR Code </button>
       </div>
     </main>
   );
+}
+
+function isValidThaiID(User: string) {
+  if (!/^\d{13}$/.test(User)) return false;
+  if (User[0] === "0") return false;
+  let sum = 0;
+
+  for (let i = 0; i < 12; i++) {
+    sum += Number(User[i]) * (13 - i);
+  }
+
+  const checkDigit = (11 - (sum % 11)) % 10;
+
+  return checkDigit === Number(User[12]);
 }

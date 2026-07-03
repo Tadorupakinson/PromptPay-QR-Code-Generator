@@ -21,7 +21,7 @@ export default function QRPage() {
         setData(parsed);
 
         const create = async () => {
-            const payload = generatePayload(parsed.phone, {
+            const payload = generatePayload(parsed.User, {
                 amount: parsed.amount ? Number(parsed.amount) : undefined,
             });
 
@@ -56,7 +56,7 @@ export default function QRPage() {
                 {data && (
                     <div className="text-center text-black ">
                         <p>{data?.amount ? Number(data.amount).toFixed(2) : "ไม่กำหนด"}</p>
-                        <p>{data.phone}</p>
+                        <p>{data.User}</p>
                     </div>
                 )}
 
