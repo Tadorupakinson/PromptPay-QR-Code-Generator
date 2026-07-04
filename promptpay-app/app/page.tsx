@@ -34,7 +34,7 @@ export default function Home() {
         Number(amountvalue) <= 2000000);
 
     if (!AmountisValid) {
-      setAmountError("กรุณากรอกจำนวนเงินมากกว่า 0 และน้อยกว่าหรือเท่ากับ 2,000,000 บาท");
+      setAmountError("กรุณากรอกจำนวนเงินระหว่าง 0 ถึง 2,000,000 บาท");
       return;
     }
 
